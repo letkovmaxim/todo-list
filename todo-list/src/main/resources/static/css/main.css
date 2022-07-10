@@ -1,0 +1,45 @@
+.category-btn {
+    width: 100%;
+    text-align: left;
+    border: none;
+}
+
+.catalogue-btn {
+    width: 100%;
+    text-align: left;
+    border: none;
+}
+
+.task-btn {
+    width: 100%;
+    text-align: left;
+    border: none;
+}
+
+.categories-container:hover {
+    border-bottom: 1px solid #b4b4b4;
+}
+
+.categories-container {
+    border-bottom: 1px solid #e3e3e3;
+}
+
+.catalogues-container:hover {
+    border-bottom: 1px solid #b4b4b4;
+}
+
+.catalogues-container {
+    border-bottom: 1px solid #e3e3e3;
+}
+
+.tasks-container:hover {
+    border-bottom: 1px solid #b4b4b4;
+}
+
+.tasks-container {
+    border-bottom: 1px solid #e3e3e3;
+}
+
+.task-btn {
+    border-radius: 0;
+}

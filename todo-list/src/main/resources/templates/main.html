@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo | Дела</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link th:href="@{/css/main.css}"  href="../static/css/main.css" rel="stylesheet" />
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light shadow mb-4">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/main}" href="main.html">
+                <img th:src="@{/logo/logo.svg}" src="../static/logo/logo.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                Todo | Дела
+            </a>
+            <div class="dropdown">
+                <button th:text="${activeUser.name}" class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    User
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" th:href="@{/admin}" href="admin.html">Администрирование</a></li>
+                    <li><a class="dropdown-item" th:href="@{/logout}" href="#">Выход</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="d-flex flex-row">
+        <div class="container shadow rounded align-self-start" style="margin-right: 2px; min-height: 25em; width: 25%">
+            <div class="row">
+                <div class="col mt-2">
+                    <div class="d-flex">
+                        <h5 style="color: #525252">Категории</h5>
+                    </div>
+
+                    <div th:each="category: ${activeUser.categories}">
+                        <div class="container d-flex justify-content-between mb-1 categories-container" th:style="${categoryToView.id == category.id}? 'border-bottom: 1px solid #3385ff'">
+                            <form th:action="@{/main/view/category/{id}(id = ${category.id})}" method="post" th:id="'form' + ${category.id}">
+                            </form>
+
+                            <button th:text="${category.name}" th:form="'form' + ${category.id}" class="btn category-btn">
+                                Категория-1
+                            </button>
+
+
+                            <button class="btn btn-light btn-sm" style="margin-right: 3px" data-bs-toggle="modal" th:attr="data-bs-target=${'#categoryRenameModal'} + ${category.id}" data-bs-target="#categoryRenameModal">
+                                <i class="bi-pen" role="img" aria-label="Pen"></i>
+                            </button>
+                            <div class="modal fade" th:id="'categoryRenameModal' + ${category.id}" id="categoryRenameModal" tabindex="-1" th:attr="aria-labelledby=${'categoryRenameModalLabel'} + ${category.id}" aria-labelledby="categoryRenameModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'categoryRenameModalLabel' + ${category.id}" id="categoryRenameModalLabel">Введите новое название</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form th:action="@{/main/rename/category/{id}(id = ${category.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="input-group mb-3">
+                                                    <input name="name" th:value="${name}" type="text" class="form-control" th:placeholder="${category.name}" placeholder="Категория-1">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                <button type="submit" class="btn btn-primary">Переименовать</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-light btn-sm"  data-bs-toggle="modal" th:attr="data-bs-target=${'#removeCategoryModal'} + ${category.id}" data-bs-target="#removeCategoryModal">
+                                <i class="bi-trash3" role="img" aria-label="trash"></i>
+                            </button>
+                            <div class="modal fade" th:id="'removeCategoryModal' + ${category.id}" id="removeCategoryModal" tabindex="-1" th:attr="aria-labelledby=${'removeCategoryModalLabel'} + ${category.id}" aria-labelledby="removeCategoryModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'removeCategoryModalLabel' + ${category.id}" id="removeCategoryModalLabel">Внимание</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Вы действительно хотите удалить эту категорию?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                            <form th:action="@{/main/remove/category/{id}(id = ${category.id})}" method="post">
+                                                <button type="submit" class="btn btn-primary">Удалить</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-light btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#addCategoryModal"
+                            style="background-color: #f6f6f6; width: 100%">
+                        <i class="bi-plus-lg" role="img" aria-label="Plus"></i>
+                    </button>
+                    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addCategoryModalLabel">Добавить новую категорию</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form th:action="@{/main/add/category}" method="post">
+                                    <div class="modal-body">
+                                        <div class="input-group mb-3">
+                                            <input name="name" th:value="${name}" type="text" class="form-control" placeholder="Название">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                        <button type="submit" class="btn btn-primary">Добавить</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="container shadow rounded align-self-start" style="margin-left: 2px; min-height: 40em; width: 30%">
+            <div class="row">
+                <div th:if="${categoryToView.id != null}" class="col mt-2">
+                    <h5 th:text="${categoryToView.name}" style="color: #525252">Категория-1</h5>
+
+                    <div th:each="catalogue: ${categoryToView.catalogues}">
+                        <div class="container d-flex justify-content-between mt-1 catalogues-container">
+
+                            <button th:text="${catalogue.name}" class="btn catalogue-btn" type="button" data-bs-toggle="collapse" th:attr="data-bs-target=${'#collapseCatalogue'} + ${catalogue.id}, aria-controls=#{'#collapseCatalogue' + ${catalogue.id}}" data-bs-target="#collapseCatalogue" aria-expanded="false" aria-controls="collapseCatalogue">
+                                Каталог-1
+                            </button>
+
+                            <button class="btn btn-light btn-sm" data-bs-toggle="modal" th:attr="data-bs-target=${'#addTaskModal'} + ${catalogue.id}" data-bs-target="#addTaskModal" style="margin-right: 3px">
+                                <i class="bi-plus-lg" role="img" aria-label="Plus"></i>
+                            </button>
+                            <div class="modal fade" th:id="'addTaskModal' + ${catalogue.id}" id="addTaskModal" tabindex="-1" th:attr="aria-labelledby=${'addTaskModalLabel'} + ${catalogue.id}" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'addTaskModalLabel' + ${catalogue.id}" id="addTaskModalLabel">Добавить новое дело</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form th:action="@{/main/catalogue/{id}/add/task(id = ${catalogue.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="input-group mb-3">
+                                                    <input name="name" th:value="${name}" type="text" class="form-control" placeholder="Название">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                <button type="submit" class="btn btn-primary">Добавить</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-light btn-sm" style="margin-right: 3px" data-bs-toggle="modal" th:attr="data-bs-target=${'#catalogueRenameModal'} + ${catalogue.id}" data-bs-target="#catalogueRenameModal">
+                                <i class="bi-pen" role="img" aria-label="Pen"></i>
+                            </button>
+                            <div class="modal fade" th:id="'catalogueRenameModal' + ${catalogue.id}" id="catalogueRenameModal" tabindex="-1" th:attr="aria-labelledby=${'catalogueRenameModal'} + ${catalogue.id}" aria-labelledby="catalogueRenameModal" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'categoryRenameLabel' + ${catalogue.id}" id="categoryRenameLabel">Введите название</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form th:action="@{/main/rename/catalogue/{id}(id = ${catalogue.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="input-group mb-3">
+                                                    <input name="name" th:value="${name}" type="text" class="form-control" th:placeholder="${catalogue.name}" placeholder="Каталог-1">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                <button type="submit" class="btn btn-primary">Переименовать</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-light btn-sm" data-bs-toggle="modal" th:attr="data-bs-target=${'#removeCatalogueModal'} + ${catalogue.id}"  data-bs-target="#removeCatalogueModal">
+                                <i class="bi-trash3" role="img" aria-label="Trash"></i>
+                            </button>
+                            <div class="modal fade" th:id="'removeCatalogueModal' + ${catalogue.id}" id="removeCatalogueModal" tabindex="-1" th:attr="aria-labelledb=${'removeCatalogueLabe'} + ${catalogue.id}" aria-labelledby="removeCatalogueLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'removeCatalogueLabel' + ${catalogue.id}" id="removeCatalogueLabel">Внимание</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form th:action="@{/main/remove/catalogue/{id}(id = ${catalogue.id})}" method="post">
+                                            <div class="modal-body">
+                                                Вы действительно хотите удалить этот каталог?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                <button type="submit" class="btn btn-primary">Удалить</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="collapse show" th:id="'collapseCatalogue' + ${catalogue.id}" id="collapseCatalogue" style="margin-left: 30px">
+                            <div class="card card-body mt-1" style="border: none; padding: 6px; margin-right: 6px">
+
+                                    <div th:each="task: ${catalogue.tasks}" class="d-flex mb-1 tasks-container">
+
+                                        <button th:text="${task.name}" class="btn task-btn" data-bs-toggle="modal" th:attr="data-bs-target=${'#infoTaskModal'} + ${task.id}" data-bs-target="#infoTaskModal" th:style="${task.isDone}? 'text-decoration: line-through; color: #cccccc;' : ''" th:styleappend="${task.isImportant}? 'background-color: #ffe6e6' : ''">
+                                            Дело-1
+                                        </button>
+
+                                        <div class="modal fade" th:id="'infoTaskModal' + ${task.id}" id="infoTaskModal" tabindex="-1" th:attr="aria-labelledby=${'infoTaskLabe'} + ${task.id}" aria-labelledby="infoTaskLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" th:text="${task.name}" th:id="'infoTaskLabel' + ${task.id}" id="infoTaskLabel">Внимание</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+
+                                                    <form th:action="@{/main/task/{id}/set/status(id = ${task.id})}" method="post">
+                                                        <div class="modal-body">
+                                                            <p th:text="'Дата создания: ' + ${task.creationDate}"></p>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" value="" name="doneStatus" th:value="on" id="flexCheck1" th:checked="${task.isDone}">
+                                                                <label class="form-check-label" for="flexCheck1">
+                                                                    Выполнено
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" value="" name="importantStatus" th:value="on" id="flexCheck2" th:checked="${task.isImportant}">
+                                                                <label class="form-check-label" for="flexCheck2">
+                                                                    Важное
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                            <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button class="btn btn-light btn-sm" style="margin-right: 3px"  data-bs-toggle="modal" th:attr="data-bs-target=${'#renameTaskModal'} + ${task.id}" data-bs-target="#renameTaskModal">
+                                            <i class="bi-pen" role="img" aria-label="Pen"></i>
+                                        </button>
+
+                                        <div class="modal fade" th:id="'renameTaskModal' + ${task.id}" id="renameTaskModal" tabindex="-1" th:attr="aria-labelledby=${'renameTaskModalLabel'} + ${task.id}" aria-labelledby="renameTaskModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" th:id="'renameTaskLabel' + ${task.id}" id="renameTaskLabel">Введите новое название</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form th:action="@{/main/rename/task/{id}(id = ${task.id})}" method="post">
+                                                        <div class="modal-body">
+                                                            <div class="input-group mb-3">
+                                                                <input name="name" th:value="${name}" type="text" class="form-control" th:placeholder="${task.name}" placeholder="Дело-1">
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                            <button type="submit" class="btn btn-primary">Переименовать</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button class="btn btn-light btn-sm" data-bs-toggle="modal" th:attr="data-bs-target=${'#removeTaskModal'} + ${task.id}" data-bs-target="#removeTaskModal">
+                                            <i class="bi-trash3" role="img" aria-label="Trash"></i>
+                                        </button>
+
+                                        <div class="modal fade" th:id="'removeTaskModal' + ${task.id}" id="removeTaskModal" tabindex="-1" th:attr="aria-labelledby=${'removeTaskLabe'} + ${task.id}" aria-labelledby="removeTaskLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" th:id="'removeTaskLabel' + ${task.id}" id="removeTaskLabel">Внимание</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form th:action="@{/main/remove/task/{id}(id = ${task.id})}" method="post">
+                                                        <div class="modal-body">
+                                                            Вы действительно хотите удалить это дело?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                            <button type="submit" class="btn btn-primary">Удалить</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-light btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#addCatalogueModal"
+                            style="background-color: #f6f6f6; width: 100%">
+                        <i class="bi-plus-lg" role="img" aria-label="Plus"></i>
+                    </button>
+
+                    <div class="modal fade" id="addCatalogueModal" tabindex="-1" aria-labelledby="addCatalogueModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addCatalogueModalLabel">Добавить новый список</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form th:action="@{/main/category/{id}/add/catalogue(id = ${categoryToView.id})}" method="post">
+                                    <div class="modal-body">
+                                        <div class="input-group mb-3">
+                                            <input name="name" th:value="${name}" type="text" class="form-control" placeholder="Название">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                        <button type="submit" class="btn btn-primary">Добавить</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>

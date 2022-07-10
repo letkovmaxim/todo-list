@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo | Вход</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link th:href="@{/css/login.css}" href="../static/css/login.css" rel="stylesheet">
+</head>
+<body class="text-center">
+    <nav class="navbar navbar-light bg-light shadow mb-4">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/main}" href="main.html">
+                <img th:src="@{/logo/logo.svg}" src="../static/logo/logo.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                Todo | Вход
+            </a>
+        </div>
+    </nav>
+
+    <main class="form-signin w-100 m-auto shadow" style="height: 30em">
+        <form th:action="@{/login}" method="post">
+            <img class="mb-4" th:src="@{/logo/lock.svg}" src="../static/logo/lock.svg" alt="" width="72" height="57">
+            <h1 class="h3 mb-3 fw-normal">Вход</h1>
+
+            <div class="form-floating">
+                <input type="username" class="form-control" id="floatingInput" placeholder="Username" name="username" th:value="${username}">
+                <label for="floatingInput">Логин</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password" th:action="${password}">
+                <label for="floatingPassword">Пароль</label>
+            </div>
+
+            <div class="mb-2">
+                <a th:href="@{/registration}" href="registration.html" class="link-secondary" style="text-decoration: none">Регистрация</a>
+            </div>
+
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+
+            <div th:if="${loginError != null}" th:text="${loginError}" class="alert alert-danger mt-4" role="alert" >
+                Alert
+            </div>
+
+        </form>
+    </main>
+</body>
+</html>
