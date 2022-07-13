@@ -27,6 +27,9 @@ public class Catalogue {
     private Long id;
     private String name;
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "userId", nullable = false)
+    User user;
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "categoryId", nullable = false)
     Category category;
     @OneToMany(mappedBy = "catalogue", fetch = EAGER, cascade = ALL)

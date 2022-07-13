@@ -1,5 +1,7 @@
 package org.todo;
 
+import org.todo.model.Catalogue;
+import org.todo.model.Category;
 import org.todo.model.Role;
 import org.todo.model.User;
 import org.todo.service.UserService;
@@ -25,7 +27,7 @@ public class Application {
             userService.saveRole(new Role(null, "ROLE_USER"));
 
             userService.saveUser(new User(null, "admin", "admin", "admin", "admin",
-                    new ArrayList<>(), new ArrayList<>()));
+                    new ArrayList<>(), new ArrayList<>(), -1L, "01.01.01", true, true));
 
             userService.addRoleToUser("admin", "ROLE_USER");
             userService.addRoleToUser("admin", "ROLE_ADMIN");

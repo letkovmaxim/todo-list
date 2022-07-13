@@ -31,4 +31,8 @@ public class User {
     private List<Role> roles = new ArrayList<>();
     @OneToMany(mappedBy = "user", fetch = LAZY, cascade = ALL)
     private List<Category> categories = new ArrayList<>();
+    private Long categoryToViewId;
+    private String registrationDate;
+    private Boolean isAdmin;
+    private Boolean isActive;
 }

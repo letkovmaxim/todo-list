@@ -21,10 +21,14 @@ public class Task {
     private Long id;
     private String name;
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "userId", nullable = false)
+    User user;
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "catalogueId", nullable = false)
     Catalogue catalogue;
     private Boolean isDone;
     private Boolean isImportant;
+    private Boolean isFavorite;
     private String creationDate;
     private String expirationDate;
 }
